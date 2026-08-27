@@ -1,0 +1,63 @@
+name: Deploy LLM Scouting Bot to GCP Cloud Functions
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: europe-west1
+  FUNCTION_NAME: llm-scouting-bot
+  SERVICE_ACCOUNT: ${{ secrets.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+
+jobs:
+  deploy:
+    name: Deploy Serverless Function
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to Google Cloud Functions (Gen 2)
+        run: |
+          gcloud functions deploy ${{ env.FUNCTION_NAME }} \
+            --gen2 \
+            --runtime=python311 \
+            --region=${{ env.REGION }} \
+            --source=. \
+            --entry-point=handler \
+            --trigger-http \
+            --allow-unauthenticated \
+            --memory=1024Mi \
+            --timeout=120s \
+            --set-secrets="\
+          SERPER_API_KEY=SERPER_API_KEY:latest,\
+          OPENAI_API_KEY=OPENAI_API_KEY:latest,\
+          TELEGRAM_BOT_TOKEN=TELEGRAM_BOT_TOKEN:latest,\
+          TELEGRAM_WEBHOOK_SECRET=TELEGRAM_WEBHOOK_SECRET:latest,\
+          WYSCOUT_USERNAME=WYSCOUT_USERNAME:latest,\
+          WYSCOUT_PASSWORD=WYSCOUT_PASSWORD:latest,\
+          MONGO_USERNAME=MONGO_USERNAME:latest,\
+          MONGO_PASSWORD=MONGO_PASSWORD:latest" \
+            --set-env-vars="\
+          ADMIN_TELEGRAM_ID=127932719,\
+          GCS_BUCKET_NAME=llmpafosfc,\
+          MONGO_HOST=analyticalplatform.cnoaz.mongodb.net,\
+          MONGO_DATABASE=analyticalplatform,\
+          MODEL_NAME=gemini-3-flash-preview"
