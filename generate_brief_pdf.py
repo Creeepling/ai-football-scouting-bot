@@ -71,8 +71,8 @@ def create_brief_pdf(output_path="AI_Football_Scouting_Bot_Brief.pdf"):
         'DocTitle',
         parent=styles['Normal'],
         fontName='Arial-Bold',
-        fontSize=16,
-        leading=20,
+        fontSize=15,
+        leading=19,
         textColor=colors.HexColor('#0F172A'),
         spaceAfter=3
     )
@@ -81,21 +81,21 @@ def create_brief_pdf(output_path="AI_Football_Scouting_Bot_Brief.pdf"):
         'DocSubTitle',
         parent=styles['Normal'],
         fontName='Arial',
-        fontSize=9.5,
-        leading=13,
+        fontSize=9,
+        leading=12.5,
         textColor=colors.HexColor('#475569'),
-        spaceAfter=5
+        spaceAfter=4
     )
 
     section_header_style = ParagraphStyle(
         'SecHeader',
         parent=styles['Normal'],
         fontName='Arial-Bold',
-        fontSize=10,
-        leading=13,
+        fontSize=9.5,
+        leading=12.5,
         textColor=colors.HexColor('#1E3A8A'),
-        spaceBefore=5,
-        spaceAfter=2,
+        spaceBefore=4,
+        spaceAfter=1.5,
         keepWithNext=True
     )
 
@@ -103,30 +103,30 @@ def create_brief_pdf(output_path="AI_Football_Scouting_Bot_Brief.pdf"):
         'Body',
         parent=styles['Normal'],
         fontName='Arial',
-        fontSize=8.5,
-        leading=11.5,
+        fontSize=8,
+        leading=11,
         textColor=colors.HexColor('#334155'),
-        spaceAfter=2
+        spaceAfter=1.5
     )
 
     bullet_style = ParagraphStyle(
         'Bullet',
         parent=styles['Normal'],
         fontName='Arial',
-        fontSize=8.5,
-        leading=11.5,
+        fontSize=8,
+        leading=11,
         textColor=colors.HexColor('#1E293B'),
-        leftIndent=10,
-        firstLineIndent=-6,
-        spaceAfter=1.5
+        leftIndent=9,
+        firstLineIndent=-5,
+        spaceAfter=1
     )
 
     callout_style = ParagraphStyle(
         'Callout',
         parent=styles['Normal'],
         fontName='Arial',
-        fontSize=8.5,
-        leading=11.5,
+        fontSize=8,
+        leading=11,
         textColor=colors.HexColor('#0F172A')
     )
 
@@ -134,7 +134,7 @@ def create_brief_pdf(output_path="AI_Football_Scouting_Bot_Brief.pdf"):
 
     # Title & Subtitle
     story.append(Paragraph("AI Football Scouting Assistant -- Project Case Study", title_style))
-    story.append(Paragraph("Серверлесс AI-платформа для автоматизированного скаутинга, расчета перцентилей и генерации аналитических отчетов", subtitle_style))
+    story.append(Paragraph("Серверлесс AI-платформа аналитики: детерминированный стат-движок в Python + ReAct LLM-оркестрация", subtitle_style))
 
     # Meta Table
     meta_html = "<b>GitHub Repository:</b> <font color='#2563EB'><u><a href='https://github.com/Creeepling/ai-football-scouting-bot'>https://github.com/Creeepling/ai-football-scouting-bot</a></u></font><br/>" \
@@ -144,40 +144,44 @@ def create_brief_pdf(output_path="AI_Football_Scouting_Bot_Brief.pdf"):
     meta_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#F1F5F9')),
         ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#CBD5E1')),
-        ('TOPPADDING', (0, 0), (-1, -1), 4),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-        ('LEFTPADDING', (0, 0), (-1, -1), 8),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ('TOPPADDING', (0, 0), (-1, -1), 3.5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3.5),
+        ('LEFTPADDING', (0, 0), (-1, -1), 7),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 7),
     ]))
     story.append(meta_table)
-    story.append(Spacer(1, 3))
+    story.append(Spacer(1, 2.5))
 
-    # 1. Проблема
-    story.append(Paragraph("1. Какую конкретную проблему решает продукт", section_header_style))
+    # 1. Архитектурная идея и проблема
+    story.append(Paragraph("1. Архитектурная философия и решаемая проблема", section_header_style))
     story.append(Paragraph(
-        "Первичный скаутинг и оценка кандидатов требует ручного сбора статистики из разрозненных источников (Transfermarkt, Wyscout), вычисления позиции-специфичных перцентилей относительно лиги, отрисовки графиков и написания текстовых заключений. Продукт полностью автоматизирует этот аналитический цикл: по входящей ссылке на игрока система извлекает метаданные, рассчитывает перцентили на основе базы матчей лиги, строит визуальные скаутинг-карты и формирует экспертное тактическое резюме в Telegram.",
+        "<b>Архитектурный принцип:</b> Полное разделение математических вычислений и языковой генерации. Статистика, Per-90, перцентили и Байесовские сглаживания рассчитываются <b>детерминированно в Python/Pandas</b>. LLM <b>не является источником числовой истины</b> и используется исключительно для распознавания сущностей (Entity Resolution), оркестрации инструментов (ReAct Tool Calling) и контекстной тактической интерпретации.",
+        body_style
+    ))
+    story.append(Paragraph(
+        "<b>Проблема:</b> Скаутинг требует ручного сопоставления профилей Transfermarkt и Wyscout, вычисления перцентилей относительно лиги/позиции, построения графиков и написания резюме. Продукт автоматизирует этот цикл от ссылки до готового досье со скаутинг-картой и экспертным резюме в Telegram.",
         body_style
     ))
 
     # 2. Пользователь
     story.append(Paragraph("2. Кто пользователь", section_header_style))
-    story.append(Paragraph("- Спортивные директоры и селекционные отделы профессиональных футбольных клубов.", bullet_style))
+    story.append(Paragraph("- Спортивные директоры и селекционные отделы футбольных клубов.", bullet_style))
     story.append(Paragraph("- Футбольные скауты и матчевые аналитики, проводящие первичный скрининг игроков.", bullet_style))
-    story.append(Paragraph("- Футбольные агентства для оперативной подготовки аналитических досье и презентаций кандидатов.", bullet_style))
+    story.append(Paragraph("- Футбольные агентства для подготовки аналитических досье и презентаций кандидатов.", bullet_style))
 
     # 3. Личный вклад
-    story.append(Paragraph("3. Что именно я сделал лично (Architecture & Core Engineering)", section_header_style))
+    story.append(Paragraph("3. Что именно сделано лично (Engineering Ownership)", section_header_style))
     story.append(Paragraph("- <b>Архитектура и Backend:</b> Спроектировал и реализовал модульный серверлесс-сервис на Python с изоляцией сессий через <b>contextvars</b> для потокобезопасной обработки запросов.", bullet_style))
-    story.append(Paragraph("- <b>Статистический движок:</b> Разработал алгоритмы нормализации показателей: расчет Per-90, перцентильных рангов и Байесовского сглаживания (Bayes Rank) для метрик с малым числом попыток.", bullet_style))
+    story.append(Paragraph("- <b>Детерминированный стат-движок:</b> Разработал формулы нормализации показателей: Per-90, перцентильные ранги по лигам и Байесовское сглаживание (<b>bayes_rank</b>) для метрик с малым числом попыток.", bullet_style))
     story.append(Paragraph("- <b>Data Pipelines & Агрегации:</b> Написал коннекторы к Wyscout API v3 и MongoDB Atlas со сложными агрегационными пайплайнами сезонной и матчевой статистики.", bullet_style))
-    story.append(Paragraph("- <b>AI Agent & Инструменты:</b> Построил ReAct-агента на базе LangChain с набором инструментов (поиск сущностей, выбор сезона, глубокий анализ метрик и расчет игровых позиций).", bullet_style))
-    story.append(Paragraph("- <b>Генератор графических отчетов:</b> Реализовал рендеринг скаутинг-карт, гистограмм распределения по лиге, тепловых карт и круговых диаграмм на Matplotlib/Seaborn с контролем утечек памяти.", bullet_style))
+    story.append(Paragraph("- <b>AI Agent & Tool Calling:</b> Построил ReAct-агента на базе LangChain с набором инструментов (поиск сущностей, выбор сезона, глубокий анализ метрик и расчет игровых позиций).", bullet_style))
+    story.append(Paragraph("- <b>Генератор графических отчетов:</b> Реализовал рендеринг скаутинг-карт, гистограмм распределения, тепловых карт и круговых диаграмм на Matplotlib/Seaborn с контролем утечек памяти.", bullet_style))
     story.append(Paragraph("- <b>DevOps & Безопасность:</b> Настроил zero-secret архитектуру через GCP Secret Manager и автоматизировал CI/CD деплой в GitHub Actions через Workload Identity Federation (WIF).", bullet_style))
 
     # 4. Архитектура системы
     story.append(Paragraph("4. Архитектура системы", section_header_style))
     story.append(Paragraph(
-        "<b>Поток данных:</b> Telegram Webhook <b>-></b> GCP Cloud Function (Router) <b>-></b> Thread-Safe Context <b>-></b> ReAct Agent (LangChain) <b>-></b> External APIs (Wyscout API, MongoDB Atlas, Serper API) <b>-></b> Statistical Engine (Pandas / NumPy) <b>-></b> Visualization Engine (Matplotlib / Seaborn) <b>-></b> GCS Session Store <b>-></b> Telegram Bot API.",
+        "<b>Поток данных:</b> Telegram Webhook <b>-></b> GCP Cloud Function (Router) <b>-></b> Thread-Safe Context (contextvars) <b>-></b> ReAct Agent (LangChain) <b>-></b> Data Layer (Wyscout API, MongoDB Atlas, Serper API) <b>-></b> Deterministic Engine (Pandas / NumPy) <b>-></b> Visualization Engine (Matplotlib / Seaborn) <b>-></b> GCS Session Store <b>-></b> Telegram Bot API.",
         body_style
     ))
 
@@ -189,31 +193,32 @@ def create_brief_pdf(output_path="AI_Football_Scouting_Bot_Brief.pdf"):
     story.append(Paragraph("- <b>Data Science & Визуализация:</b> Pandas, NumPy, Matplotlib, Seaborn, Pillow.", bullet_style))
     story.append(Paragraph("- <b>Внешние сервисы:</b> Wyscout API v3 (профили, карьеры, сезоны, соревнования), Telegram Bot API.", bullet_style))
 
-    # 6. Применение AI / LLM
-    story.append(Paragraph("6. Где и как используется AI / LLM", section_header_style))
-    story.append(Paragraph("- <b>Entity Extraction & Resolution:</b> Извлечение метаданных игрока из Transfermarkt и точное сопоставление с профилем в базе Wyscout.", bullet_style))
-    story.append(Paragraph("- <b>ReAct Function Calling:</b> Автономный выбор и вызов аналитических инструментов агентом в зависимости от контекста диалога.", bullet_style))
+    # 6. Применение AI / LLM и Tool Calling
+    story.append(Paragraph("6. Где и как используется AI / LLM (Tool Calling)", section_header_style))
+    story.append(Paragraph("- <b>Fuzzy Entity Resolution:</b> Парсинг неструктурированных ссылок Transfermarkt через Serper + LLM-экстрактор и точный маппинг на базу Wyscout.", bullet_style))
+    story.append(Paragraph("- <b>ReAct Tool Orchestration:</b> Автономный выбор и вызов аналитических инструментов агентом в зависимости от контекста диалога (выбор сезона, срез метрики, тепловая карта, распределение позиций).", bullet_style))
     story.append(Paragraph("- <b>Tactical Scouting Synthesis:</b> Генерация экспертного резюме на базе перцентилей игрока (оценка баланса качеств, выявление аномалий и сильных сторон на фоне конкурентов по лиге).", bullet_style))
 
     # 7. Развертывание
-    story.append(Paragraph("7. Как система была развернута (DevOps / Infrastructure)", section_header_style))
+    story.append(Paragraph("7. Развертывание и инфраструктура (DevOps)", section_header_style))
     story.append(Paragraph(
-        "Сервис развернут в бессерверной среде <b>Google Cloud Functions (Gen 2)</b> с автоматическим масштабированием от 0. Конфиденциальные ключи изолированы в <b>GCP Secret Manager</b> и динамически монтируются при запуске. Деплой автоматизирован через <b>GitHub Actions</b> с беспарольной аутентификацией через <b>Workload Identity Federation</b>.",
+        "Сервис развернут в бессерверной среде <b>Google Cloud Functions (Gen 2)</b> с масштабированием в 0. Конфиденциальные ключи изолированы в <b>GCP Secret Manager</b> и динамически монтируются при запуске. Деплой автоматизирован через <b>GitHub Actions</b> с беспарольной аутентификацией через <b>Workload Identity Federation</b>.",
         body_style
     ))
 
-    # 8. Фактический результат
-    story.append(Paragraph("8. Какой фактический результат получился и статус использования", section_header_style))
-    story.append(Paragraph(
-        "Создан готовый к эксплуатации AI-ассистент с поддержкой двух языков (EN/RU). Обеспечена сквозная автоматизация: от входящей ссылки до готового аналитического среза со скаутинг-картой и текстовым отчетом без участия аналитика. Продукт применялся селекционной командой для экспресс-оценки кандидатов и формирования лонг-листов трансферных целей.",
-        body_style
-    ))
+    # 8. Что было сложным технически
+    story.append(Paragraph("8. Что было сложным технически (Key Technical Challenges)", section_header_style))
+    story.append(Paragraph("- <b>Small-Sample Variance:</b> Игрок с 2 успешными обводками из 2 получал 100-й перцентиль. Решено внедрением Байесовского сглаживания с учетом априорного веса 80-го перцентиля лиги.", bullet_style))
+    story.append(Paragraph("- <b>Fuzzy Entity Matching:</b> Сопоставление локализованных имен и транслитераций Transfermarkt с жестким поисковым индексом Wyscout.", bullet_style))
+    story.append(Paragraph("- <b>Matplotlib в Serverless:</b> Устранение утечек памяти в переиспользуемых контейнерах Cloud Functions через строгий вызов plt.close(fig) и бинарные потоки io.BytesIO.", bullet_style))
+    story.append(Paragraph("- <b>Потокобезопасность:</b> Изоляция контекста запросов (chat_id, язык) без глобальных переменных через contextvars.", bullet_style))
 
-    # 9. Ограничения и улучшение
-    story.append(Paragraph("9. Какие есть ограничения системы и что улучшил бы сейчас", section_header_style))
-    story.append(Paragraph("- <b>Асинхронные очереди (Cloud Tasks / Pub/Sub):</b> Вынесение генерации тяжелых графиков в фоновые воркеры с пуш-уведомлением для исключения рисков вебхук-таймаута.", bullet_style))
-    story.append(Paragraph("- <b>Similarity Search (Поиск аналогов):</b> Добавление векторного поиска (Vector DB / pgvector) по вектору перцентилей для автоматического поиска похожих игроков (Player Comparison).", bullet_style))
-    story.append(Paragraph("- <b>Кэширование запросов (Redis):</b> Кэширование профилей и агрегированных срезов Wyscout для минимизации расходов на вызовы сторонних API.", bullet_style))
+    # 9. Что бы сегодня сделал иначе
+    story.append(Paragraph("9. Что бы сегодня сделал иначе (Future Evolution)", section_header_style))
+    story.append(Paragraph("- <b>Асинхронные очереди (Cloud Tasks / Pub/Sub):</b> Вынесение генерации тяжелых графиков в фоновые воркеры с пуш-уведомлением для исключения рисков вебхук-таймаута Telegram.", bullet_style))
+    story.append(Paragraph("- <b>Similarity Search (Поиск аналогов):</b> Добавление векторного поиска (Vector DB / pgvector) по вектору перцентилей для автоматического подбора похожих игроков (Player Comparison).", bullet_style))
+    story.append(Paragraph("- <b>Кэширование (Redis):</b> Кэширование профилей и агрегированных срезов Wyscout для минимизации расходов на вызовы сторонних API.", bullet_style))
+    story.append(Paragraph("- <b>Modern LCEL & Structured Output:</b> Переход на Pydantic Function Calling в LangChain вместо парсинга строк ReAct.", bullet_style))
 
     doc.build(story, canvasmaker=NumberedCanvas)
     print(f"Brief PDF generated successfully at: {output_path}")
