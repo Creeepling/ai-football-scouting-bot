@@ -8,22 +8,25 @@
 
 A fundamental design principle of this system is the **strict separation between mathematical computation and natural language generation**:
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                     DETERMINISTIC LAYER (Python/Pandas)                 │
-│  • Single Source of Truth for all numbers                               │
-│  • Per-90 Normalization, Percentile Ranks (0-100), Bayesian Smoothing   │
-│  • Matplotlib & Seaborn Visual Generation                               │
-│  • 100% Mathematically Exact — ZERO LLM Calculation Hallucinations      │
-└────────────────────────────────────┬────────────────────────────────────┘
-                                     │ Verified Metrics & Percentiles
-                                     ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                     COGNITIVE LAYER (LLM / LangChain)                   │
-│  • Entity Resolution (Fuzzy Matching Transfermarkt URLs -> Wyscout IDs) │
-│  • Autonomous ReAct Tool Orchestration & Multi-Turn Routing             │
-│  • Contextual Tactical Synthesis & Scout Narrative Generation           │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph Deterministic_Layer ["📐 DETERMINISTIC LAYER (Python / Pandas / NumPy)"]
+        direction TB
+        D1["• Single Source of Truth for all numbers"]
+        D2["• Per-90 Normalization & Percentile Ranks (0-100)"]
+        D3["• Bayesian Smoothing (calculate_beta_raw)"]
+        D4["• Matplotlib & Seaborn Visual Rendering"]
+        D5["• 100% Mathematically Exact — ZERO Hallucinations"]
+    end
+
+    subgraph Cognitive_Layer ["🧠 COGNITIVE LAYER (LLM / LangChain ReAct)"]
+        direction TB
+        C1["• Entity Resolution (Transfermarkt URL -> Wyscout ID)"]
+        C2["• Autonomous ReAct Tool Calling & Multi-Turn Routing"]
+        C3["• Qualitative Tactical Narrative & Synthesis"]
+    end
+
+    Deterministic_Layer -->|"Verified Stats, Percentiles & Chart Buffers"| Cognitive_Layer
 ```
 
 - **Why this matters**: LLMs frequently hallucinate or approximate floating-point math, percentiles, and statistical aggregations. In this architecture, **the LLM is never treated as a source of numerical truth**. 
@@ -36,7 +39,7 @@ A fundamental design principle of this system is the **strict separation between
 Professional football scouting and recruitment workflows are hindered by fragmented tooling and manual data collation:
 1. **Disjointed Data Silos**: Scouts analyze player profiles on Transfermarkt for contract and biographical details, but must manually cross-reference match databases on Wyscout for raw event data.
 2. **Manual Normalization Overhead**: Raw match totals are meaningless without role-specific Per-90 normalization and league-relative percentile ranking. Computing these manually for dozens of candidates is slow and prone to human error.
-3. **Report Generation Bottleneck**: Manually building visual cards, extracting league distribution curves, and drafting qualitative player summaries consumes hours that селекционный отдел could spend evaluating talent.
+3. **Report Generation Bottleneck**: Manually building visual cards, extracting league distribution curves, and drafting qualitative player summaries consumes hours that recruitment departments could spend evaluating talent.
 
 ---
 
