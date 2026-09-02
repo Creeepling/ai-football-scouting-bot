@@ -16,7 +16,7 @@ flowchart TD
         D2["• Per-90 Normalization & Percentile Ranks (0-100)"]
         D3["• Bayesian Smoothing (calculate_beta_raw)"]
         D4["• Matplotlib & Seaborn Visual Rendering"]
-        D5["• 100% Mathematically Exact — ZERO Hallucinations"]
+        D5["• Numerical calculations are kept outside the LLM path"]
     end
 
     subgraph Cognitive_Layer ["🧠 COGNITIVE LAYER (LLM / LangChain ReAct)"]
