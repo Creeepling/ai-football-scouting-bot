@@ -13,21 +13,40 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 # ------------------------------------------------------------------------------
-# Font Registration (Cross-Platform Windows / Linux)
+# Font Registration (Cross-Platform Windows / Linux / macOS)
 # ------------------------------------------------------------------------------
-def register_fonts():
-    font_paths = [
-        ('Arial', 'C:/Windows/Fonts/arial.ttf'),
-        ('Arial-Bold', 'C:/Windows/Fonts/arialbd.ttf'),
-        ('Arial-Italic', 'C:/Windows/Fonts/ariali.ttf'),
+def setup_fonts():
+    candidates = [
+        # Windows TrueType Fonts
+        ('AppFont', 'C:/Windows/Fonts/arial.ttf',
+         'AppFont-Bold', 'C:/Windows/Fonts/arialbd.ttf',
+         'AppFont-Italic', 'C:/Windows/Fonts/ariali.ttf'),
+        # Linux DejaVu Fonts
+        ('AppFont', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+         'AppFont-Bold', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+         'AppFont-Italic', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf'),
+        # Linux Liberation Fonts
+        ('AppFont', '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+         'AppFont-Bold', '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+         'AppFont-Italic', '/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf'),
     ]
-    for name, path in font_paths:
-        if os.path.exists(path):
-            pdfmetrics.registerFont(TTFont(name, path))
-        else:
-            print(f"Warning: Font {name} at {path} not found. Standard fonts will be used.")
 
-register_fonts()
+    for reg_name, reg_path, bold_name, bold_path, ital_name, ital_path in candidates:
+        if os.path.exists(reg_path) and os.path.exists(bold_path):
+            try:
+                pdfmetrics.registerFont(TTFont(reg_name, reg_path))
+                pdfmetrics.registerFont(TTFont(bold_name, bold_path))
+                if os.path.exists(ital_path):
+                    pdfmetrics.registerFont(TTFont(ital_name, ital_path))
+                return 'AppFont', 'AppFont-Bold', 'AppFont-Italic'
+            except Exception:
+                pass
+
+    # Universal standard built-in ReportLab fallback (Works everywhere)
+    return 'Helvetica', 'Helvetica-Bold', 'Helvetica-Oblique'
+
+
+FONT_REGULAR, FONT_BOLD, FONT_ITALIC = setup_fonts()
 
 
 # ------------------------------------------------------------------------------
@@ -52,7 +71,7 @@ class NumberedCanvas(canvas.Canvas):
 
     def draw_page_decorations(self, page_count):
         self.saveState()
-        self.setFont('Arial', 8)
+        self.setFont(FONT_REGULAR, 8)
         self.setFillColor(colors.HexColor('#64748B'))
 
         # Top Header (pages > 1)
@@ -115,7 +134,7 @@ def generate_vertical_case_study_pdf(case: ProjectCaseStudy, output_path: str = 
     title_style = ParagraphStyle(
         'DocTitle',
         parent=styles['Normal'],
-        fontName='Arial-Bold',
+        fontName=FONT_BOLD,
         fontSize=15,
         leading=19,
         textColor=colors.HexColor('#0F172A'),
@@ -125,7 +144,7 @@ def generate_vertical_case_study_pdf(case: ProjectCaseStudy, output_path: str = 
     subtitle_style = ParagraphStyle(
         'DocSubTitle',
         parent=styles['Normal'],
-        fontName='Arial',
+        fontName=FONT_REGULAR,
         fontSize=9,
         leading=12.5,
         textColor=colors.HexColor('#475569'),
@@ -135,7 +154,7 @@ def generate_vertical_case_study_pdf(case: ProjectCaseStudy, output_path: str = 
     section_header_style = ParagraphStyle(
         'SecHeader',
         parent=styles['Normal'],
-        fontName='Arial-Bold',
+        fontName=FONT_BOLD,
         fontSize=9.5,
         leading=12.5,
         textColor=colors.HexColor('#1E3A8A'),
@@ -147,7 +166,7 @@ def generate_vertical_case_study_pdf(case: ProjectCaseStudy, output_path: str = 
     body_style = ParagraphStyle(
         'Body',
         parent=styles['Normal'],
-        fontName='Arial',
+        fontName=FONT_REGULAR,
         fontSize=8,
         leading=11,
         textColor=colors.HexColor('#334155'),
@@ -157,7 +176,7 @@ def generate_vertical_case_study_pdf(case: ProjectCaseStudy, output_path: str = 
     bullet_style = ParagraphStyle(
         'Bullet',
         parent=styles['Normal'],
-        fontName='Arial',
+        fontName=FONT_REGULAR,
         fontSize=8,
         leading=11,
         textColor=colors.HexColor('#1E293B'),
@@ -169,7 +188,7 @@ def generate_vertical_case_study_pdf(case: ProjectCaseStudy, output_path: str = 
     callout_style = ParagraphStyle(
         'Callout',
         parent=styles['Normal'],
-        fontName='Arial',
+        fontName=FONT_REGULAR,
         fontSize=8,
         leading=11,
         textColor=colors.HexColor('#0F172A')
