@@ -227,31 +227,33 @@ cp .env.example .env
 | `MONGO_HOST` | MongoDB Atlas cluster host URI |
 | `GCS_BUCKET_NAME` | Google Cloud Storage bucket name for session state |
 
+### 3. Run Locally
+```bash
+functions-framework --target=handler --port=8080
+```
+
 ---
 
-## 🚢 Deployment to Google Cloud Platform
+## 🐳 Docker Deployment
 
-### Automated CI/CD (GitHub Actions)
-The repository includes an automated workflow in `.github/workflows/deploy.yml` utilizing **Workload Identity Federation (WIF)**. Configure the following GitHub Secrets to enable automatic deployments on `git push origin main`:
-- `GCP_PROJECT_ID`
-- `GCP_DEPLOYER_SERVICE_ACCOUNT`
-- `GCP_WORKLOAD_IDENTITY_PROVIDER`
+The application includes a production-ready `Dockerfile` for deployment on any container platform (Railway, Render, Fly.io, or VPS):
 
-### Manual Deployment via Google Cloud CLI
 ```bash
-gcloud functions deploy llm-scouting-bot \
-  --gen2 \
-  --runtime=python311 \
-  --region=europe-west1 \
-  --source=. \
-  --entry-point=handler \
-  --trigger-http \
-  --allow-unauthenticated \
-  --memory=1024Mi \
-  --timeout=120s \
-  --set-secrets="SERPER_API_KEY=SERPER_API_KEY:latest,OPENAI_API_KEY=OPENAI_API_KEY:latest,TELEGRAM_BOT_TOKEN=TELEGRAM_BOT_TOKEN:latest,TELEGRAM_WEBHOOK_SECRET=TELEGRAM_WEBHOOK_SECRET:latest,WYSCOUT_USERNAME=WYSCOUT_USERNAME:latest,WYSCOUT_PASSWORD=WYSCOUT_PASSWORD:latest,MONGO_USERNAME=MONGO_USERNAME:latest,MONGO_PASSWORD=MONGO_PASSWORD:latest" \
-  --set-env-vars="ADMIN_TELEGRAM_ID=127932719,GCS_BUCKET_NAME=llmpafosfc,MONGO_HOST=analyticalplatform.cnoaz.mongodb.net,MONGO_DATABASE=analyticalplatform,MODEL_NAME=gemini-3-flash-preview"
+# Build the Docker image
+docker build -t ai-football-scouting-bot .
+
+# Run the container with your environment file
+docker run -p 8080:8080 --env-file .env ai-football-scouting-bot
 ```
+
+---
+
+## ⚙️ Continuous Integration (CI)
+
+The repository includes a GitHub Actions workflow in `.github/workflows/ci.yml` that automatically:
+1. Validates Python 3.11 dependency resolution.
+2. Checks bytecode compilation across all modules (`python -m py_compile *.py`).
+3. Verifies PDF case study generation.
 
 ---
 
